@@ -36,14 +36,26 @@ const Navbar = () => {
                 "max-w-7xl mx-auto rounded-2xl transition-all duration-300 px-6 py-3 flex items-center justify-between",
                 isScrolled ? "glass shadow-2xl" : "bg-transparent"
             )}>
-                <Link to="/" className="flex items-center gap-2 group">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300 shadow-lg shadow-primary/20">
-                        <Rocket className="text-slate-950 w-6 h-6" />
-                    </div>
-                    <span className="font-outfit font-bold text-xl tracking-tight hidden sm:block text-slate-950 dark:text-white">
-                        SQUAD <span className="text-primary group-hover:text-glow transition-all">139</span>
-                    </span>
-                </Link>
+                {/* Left side: Kalvium logo + Squad 139 */}
+                <div className="flex items-center gap-4">
+                    {/* Kalvium Logo */}
+                    <img
+                        src="/kalvium-logo/image.png"
+                        alt="Kalvium"
+                        className="w-16 h-16 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+                    />
+                    {/* Divider */}
+                    <div className="w-px h-6 bg-slate-300 dark:bg-white/20 hidden sm:block" />
+
+                    <Link to="/" className="flex items-center gap-2 group">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300 shadow-lg shadow-primary/20">
+                            <Rocket className="text-slate-950 w-6 h-6" />
+                        </div>
+                        <span className="font-outfit font-bold text-xl tracking-tight hidden sm:block text-slate-950 dark:text-white">
+                            SQUAD <span className="text-primary group-hover:text-glow transition-all">139</span>
+                        </span>
+                    </Link>
+                </div>
 
                 {/* Desktop Links */}
                 <div className="hidden md:flex items-center gap-8">

@@ -5,51 +5,41 @@ import SquadDashboard from '../components/home/SquadDashboard';
 import { LeadershipHub } from '../components/home/LeadershipSection';
 import { motion } from 'framer-motion';
 
-/* ── Kalvium Sticker ── fixed bottom-left, persists across all slides ── */
-const KalviumSticker = () => (
+
+/* ── Author Credit ── fixed bottom-right corner ── */
+const AuthorCredit = () => (
     <motion.div
-        initial={{ opacity: 0, y: 30, rotate: -6 }}
-        animate={{ opacity: 1, y: 0, rotate: -6 }}
-        transition={{ delay: 1.2, duration: 0.6, ease: 'backOut' }}
-        whileHover={{ rotate: 0, scale: 1.08 }}
-        className="fixed bottom-8 left-8 z-[200] cursor-pointer select-none group"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.3, duration: 0.5, ease: 'backOut' }}
+        whileHover={{ scale: 1.05 }}
+        className="fixed bottom-6 right-6 z-[200] cursor-default select-none group"
     >
-        {/* Sticker body */}
-        <div className="relative flex flex-col items-center gap-2 bg-white/10 dark:bg-white/[0.06] backdrop-blur-2xl border-2 border-white/20 dark:border-white/10 rounded-[2.2rem] px-5 py-4 shadow-[0_8px_40px_rgba(0,0,0,0.3)] group-hover:shadow-neon transition-all duration-500">
-            {/* Top neon accent line */}
-            <div className="absolute inset-x-6 top-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-60 shadow-[0_0_10px_rgba(0,242,254,0.7)] rounded-full" />
+        <div className="relative flex flex-col items-end gap-0.5 bg-white/8 dark:bg-white/[0.05] backdrop-blur-xl border border-white/15 dark:border-white/10 rounded-2xl px-5 py-3 shadow-[0_6px_30px_rgba(0,0,0,0.25)] group-hover:shadow-neon transition-all duration-500">
+            {/* Top neon tracer */}
+            <div className="absolute inset-x-4 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-secondary to-transparent opacity-50 rounded-full shadow-[0_0_8px_rgba(255,0,255,0.5)]" />
 
-            {/* Logo */}
-            <div className="w-14 h-14 rounded-2xl overflow-hidden border border-white/20 shadow-lg flex items-center justify-center bg-white/10">
-                <img
-                    src="/kalvium-logo/image.png"
-                    alt="Kalvium Logo"
-                    className="w-full h-full object-contain"
-                />
-            </div>
+            <p className="text-[8px] font-black uppercase tracking-[0.5em] text-slate-400 dark:text-white/25 italic leading-none">
+                Crafted by
+            </p>
+            <p className="text-base font-black uppercase tracking-[0.15em] text-slate-900 dark:text-white leading-tight drop-shadow-[0_0_10px_rgba(0,242,254,0.5)]">
+                Suriya R V
+            </p>
 
-            {/* Attribution text */}
-            <div className="text-center leading-tight">
-                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-white/30 italic">Built by</p>
-                <p className="text-sm font-black uppercase tracking-wide text-slate-900 dark:text-white drop-shadow-[0_0_8px_rgba(0,242,254,0.5)]">
-                    Suriya R V
-                </p>
-            </div>
-
-            {/* Bottom neon accent line */}
-            <div className="absolute inset-x-6 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-secondary to-transparent opacity-40 rounded-full" />
+            {/* Bottom neon tracer */}
+            <div className="absolute inset-x-4 bottom-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-40 rounded-full" />
         </div>
-
-        {/* Shadow / glue effect */}
-        <div className="absolute inset-x-4 -bottom-2 h-4 bg-black/20 dark:bg-black/40 blur-md rounded-full -z-10" />
+        {/* Ground shadow */}
+        <div className="absolute inset-x-3 -bottom-1.5 h-3 bg-black/20 dark:bg-black/40 blur-md rounded-full -z-10" />
     </motion.div>
 );
+
 
 const Home = () => {
     return (
         <>
-            {/* Kalvium sticker – fixed, always visible across all slides */}
-            <KalviumSticker />
+            {/* Author credit — bottom-right */}
+            <AuthorCredit />
 
             <motion.main
                 initial={{ opacity: 0 }}
