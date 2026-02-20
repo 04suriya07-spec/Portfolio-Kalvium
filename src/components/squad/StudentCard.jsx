@@ -48,7 +48,7 @@ const StudentCard = ({ student, viewType }) => {
                     <h3 className="text-xl md:text-2xl font-black font-outfit tracking-tight group-hover:text-primary transition-colors">
                         {student.name}
                     </h3>
-                    <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-widest italic w-fit mx-auto md:mx-0">
+                    <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-widest w-fit mx-auto md:mx-0">
                         {student.role}
                     </span>
                 </div>

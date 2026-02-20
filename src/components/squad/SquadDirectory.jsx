@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Grid, List, SearchX } from 'lucide-react';
+import { Search, Grid, List, SearchX, Filter, ArrowUpDown } from 'lucide-react';
 import { students } from '../../data/students';
 import StudentCard from './StudentCard';
 import StudentSkeleton from './StudentSkeleton';
@@ -9,6 +9,8 @@ import { clsx } from 'clsx';
 const SquadDirectory = () => {
     const [viewType, setViewType] = useState('grid'); // 'grid' | 'list'
     const [searchQuery, setSearchQuery] = useState('');
+    const [roleFilter, setRoleFilter] = useState('All Roles');
+    const [sortBy, setSortBy] = useState('Name (A-Z)');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -16,49 +18,112 @@ const SquadDirectory = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    const filteredStudents = students.filter(s =>
-        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.skills.some(skill => skill.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    // Get unique roles for filter dropdown
+    const availableRoles = ['All Roles', ...new Set(students.map(s => s.role))].sort();
+
+    const getProcessedStudents = () => {
+        let result = students.filter(s => {
+            const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                s.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                s.skills.some(skill => skill.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+            const matchesRole = roleFilter === 'All Roles' || s.role === roleFilter;
+
+            return matchesSearch && matchesRole;
+        });
+
+        // Apply Sorting
+        result.sort((a, b) => {
+            if (sortBy === 'Name (A-Z)') return a.name.localeCompare(b.name);
+            if (sortBy === 'Name (Z-A)') return b.name.localeCompare(a.name);
+            if (sortBy === 'Skill Level') {
+                const avgA = a.skills.reduce((acc, s) => acc + s.level, 0) / a.skills.length;
+                const avgB = b.skills.reduce((acc, s) => acc + s.level, 0) / b.skills.length;
+                return avgB - avgA;
+            }
+            return 0;
+        });
+
+        return result;
+    };
+
+    const filteredStudents = getProcessedStudents();
 
     return (
-        <section className="py-20 px-4 min-h-screen">
+        <section className="pt-32 pb-20 px-4 min-h-screen">
             <div className="max-w-7xl mx-auto">
-                {/* Header & Controls */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-                    <div className="max-w-xl">
-                        <div className="flex items-center gap-4 mb-3">
+                {/* Header & Controls - Elegant side-by-side layout */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 mb-24">
+                    <div className="flex-1">
+                        <div className="flex items-center gap-4 mb-6">
                             <motion.div
                                 initial={{ opacity: 0, x: -20 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                className="text-primary font-bold tracking-widest text-xs uppercase"
+                                className="text-primary font-bold tracking-[0.4em] text-[10px] uppercase"
                             >
                                 THE COLLECTIVE
                             </motion.div>
-                            <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] font-bold text-slate-600 dark:text-white/50">
+                            <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[9px] font-black text-slate-500 dark:text-white/40 tracking-widest">
                                 {students.length} OPERATIVES
                             </span>
                         </div>
-                        <h2 className="text-4xl md:text-6xl font-black mb-4 tracking-tight text-slate-900 dark:text-white">Meet the <span className="text-glow text-primary">Squad</span></h2>
-                        <p className="text-slate-600 dark:text-white/60 font-medium">Search and explore our diverse team of creators and builders.</p>
+                        <h2 className="text-5xl md:text-8xl font-black font-outfit mb-6 tracking-tighter text-slate-900 dark:text-white uppercase leading-[0.85]">
+                            Meet the <span className="text-glow text-primary">Squad</span>
+                        </h2>
+                        <p className="text-slate-500 dark:text-white/40 text-xl font-medium tracking-tight max-w-lg">
+                            Discover the elite technical signatures of Squad 139.
+                        </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                        {/* Search Bar */}
-                        <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors w-5 h-5" />
+                    <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 bg-white/5 dark:bg-white/[0.02] p-3 rounded-[3rem] border border-slate-200/50 dark:border-white/5 shadow-2xl backdrop-blur-3xl">
+                        {/* Highly Expanded Search Bar */}
+                        <div className="relative group w-full sm:w-[450px]">
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors w-4 h-4" />
                             <input
                                 type="text"
                                 placeholder="Search by name, role or skill..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 pl-12 pr-6 w-full sm:w-96 focus:outline-none focus:border-primary/50 focus:bg-white dark:focus:bg-white/10 transition-all font-bold text-xs uppercase tracking-widest placeholder:text-slate-500 text-slate-900 dark:text-white"
+                                className="bg-slate-100/50 dark:bg-white/5 border border-transparent focus:border-primary/30 rounded-2xl py-4 pl-12 pr-5 w-full focus:outline-none transition-all font-bold text-[10px] uppercase tracking-widest placeholder:text-slate-400 text-slate-900 dark:text-white"
                             />
                         </div>
 
-                        {/* View Toggles */}
-                        <div className="flex p-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl relative">
+                        {/* Minimalist Role Filter - Icon Only */}
+                        <div className="relative group h-[58px] w-[58px] flex items-center justify-center">
+                            <div className="absolute inset-0 bg-slate-100/50 dark:bg-white/5 rounded-2xl border border-transparent group-hover:border-primary/30 transition-all" />
+                            <Filter className="relative z-10 text-primary w-4 h-4 pointer-events-none" />
+                            <select
+                                value={roleFilter}
+                                onChange={(e) => setRoleFilter(e.target.value)}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                title="Filter by Role"
+                            >
+                                {availableRoles.map(role => (
+                                    <option key={role} value={role} className="dark:bg-slate-900">{role}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Minimalist Sort - Icon Only */}
+                        <div className="relative group h-[58px] w-[58px] flex items-center justify-center">
+                            <div className="absolute inset-0 bg-slate-100/50 dark:bg-white/5 rounded-2xl border border-transparent group-hover:border-primary/30 transition-all" />
+                            <ArrowUpDown className="relative z-10 text-primary w-4 h-4 pointer-events-none" />
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                                title="Sort By"
+                            >
+                                <option value="Name (A-Z)" className="dark:bg-slate-900">Name (A-Z)</option>
+                                <option value="Name (Z-A)" className="dark:bg-slate-900">Name (Z-A)</option>
+                                <option value="Skill Level" className="dark:bg-slate-900">Top Skills</option>
+                            </select>
+                        </div>
+
+                        <div className="h-10 w-px bg-slate-200 dark:bg-white/10 mx-2 hidden lg:block" />
+
+                        {/* View Toggles - Compact */}
+                        <div className="flex p-1 bg-slate-100/50 dark:bg-white/5 rounded-2xl relative h-[58px] w-[110px]">
                             {/* Sliding Background */}
                             <motion.div
                                 className="absolute bg-slate-900 dark:bg-primary shadow-lg dark:shadow-neon rounded-xl"
@@ -132,8 +197,8 @@ const SquadDirectory = () => {
                             <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6">
                                 <SearchX className="text-slate-300 dark:text-white/20 w-10 h-10" />
                             </div>
-                            <h3 className="text-2xl font-black mb-2 uppercase italic">No students found</h3>
-                            <p className="text-slate-500 dark:text-white/40 font-medium italic">Try searching for a different name or role.</p>
+                            <h3 className="text-2xl font-black mb-2 uppercase">No students found</h3>
+                            <p className="text-slate-500 dark:text-white/40 font-medium">Try searching for a different name or role.</p>
                             <button
                                 onClick={() => setSearchQuery('')}
                                 className="mt-6 text-primary font-bold hover:underline"

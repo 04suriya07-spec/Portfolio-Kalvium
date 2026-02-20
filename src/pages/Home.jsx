@@ -54,14 +54,14 @@ const Home = () => {
 
                 {/* 02. Leadership Hub Slide (Vertical Scroll within Hub) */}
                 <section className="snap-section overflow-hidden">
-                    <div className="w-full h-full pt-20 flex items-center justify-center px-4">
+                    <div className="w-full h-full pt-32 flex items-center justify-center px-4">
                         <LeadershipHub />
                     </div>
                 </section>
 
                 {/* 05. Metrics Dashboard Slide */}
                 <section className="snap-section overflow-hidden">
-                    <div className="w-full h-full pt-16 flex items-center justify-center">
+                    <div className="w-full h-full pt-28 flex items-center justify-center">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
@@ -75,7 +75,7 @@ const Home = () => {
 
                 {/* 06. Roadmap Slide (Vertical Scroll Enabled) */}
                 <section className="snap-section overflow-y-auto no-scrollbar bg-mesh/5">
-                    <div className="w-full min-h-full pt-24 pb-16 flex flex-col items-center">
+                    <div className="w-full min-h-full pt-32 pb-16 flex flex-col items-center">
                         <div className="w-full max-w-5xl">
                             <Roadmap />
                         </div>
@@ -84,7 +84,7 @@ const Home = () => {
 
                 {/* 07. Collaboration Slide */}
                 <section className="snap-section overflow-hidden bg-mesh/10">
-                    <div className="w-full h-full pt-16 flex items-center justify-center px-4">
+                    <div className="w-full h-full pt-28 flex items-center justify-center px-4">
                         <motion.div
                             initial={{ opacity: 0, y: 100 }}
                             whileInView={{ opacity: 1, y: 0 }}

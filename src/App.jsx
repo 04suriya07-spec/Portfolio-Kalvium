@@ -33,10 +33,6 @@ function App() {
         </AnimatePresence>
       </Suspense>
 
-      {/* Footer */}
-      <footer className="py-10 text-center text-white/20 text-xs border-t border-white/5">
-        <p>© 2026 SQUAD 139 | KALVIUM ACADEMY | BUILT WITH PASSION</p>
-      </footer>
     </div>
   );
 }

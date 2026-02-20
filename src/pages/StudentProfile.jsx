@@ -149,7 +149,7 @@ const StudentProfile = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="pt-24 pb-20 px-4 min-h-screen relative overflow-hidden transition-colors"
+            className="pt-32 pb-20 px-4 min-h-screen relative overflow-hidden transition-colors"
         >
             {/* Dynamic Background Blobs */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">

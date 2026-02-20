@@ -1,94 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronUp, ChevronDown, Users, Shield, Award, History, Linkedin, ExternalLink } from 'lucide-react';
+import { Linkedin, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { leadership } from '../../data/students';
 
-const ProfileCard = ({ item, isMain, count }) => (
-    <div className={clsx(
-        "bg-white/5 dark:bg-white/[0.04] backdrop-blur-xl rounded-[2.5rem] md:rounded-[4rem] border border-white/10 shadow-2xl flex transition-all hover:bg-white/10 group overflow-hidden h-full",
-        isMain ? "flex-col md:flex-row items-center w-full" : "flex-col items-center text-center p-6"
-    )}>
-        {/* Profile Image Section - Now Linked if link exists */}
-        <a
-            href={item.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={clsx(
-                "relative shrink-0 overflow-hidden block cursor-pointer",
-                isMain ? "w-full md:w-[45%] h-64 md:h-full" : "w-24 h-24 md:w-32 md:h-32 mb-6 rounded-2xl md:rounded-3xl"
-            )}
-        >
-            <img
-                src={item.image}
-                className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110"
-                alt={item.name}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+const ProfileCard = ({ item, isMain }) => {
+    if (isMain) {
+        return (
+            <div className="bg-white/5 dark:bg-white/[0.04] backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col md:flex-row items-center w-full overflow-hidden h-full group transition-all hover:bg-white/10">
+                {/* Profile Image Section */}
+                <a
+                    href={item.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative shrink-0 overflow-hidden block cursor-pointer w-full md:w-[45%] h-64 md:h-full"
+                >
+                    <img
+                        src={item.image}
+                        className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110"
+                        alt={item.name}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-primary/20 backdrop-blur-[2px]">
+                        <ExternalLink className="w-8 h-8 text-white drop-shadow-neon" />
+                    </div>
+                </a>
 
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-primary/20 backdrop-blur-[2px]">
-                <ExternalLink className="w-8 h-8 text-white drop-shadow-neon" />
-            </div>
+                {/* Data Section */}
+                <div className="flex-1 flex flex-col justify-center p-10 md:p-16 text-left">
+                    <a
+                        href={item.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-primary transition-colors cursor-pointer block group/name"
+                    >
+                        <h4 className="font-black uppercase text-white tracking-tighter leading-none mb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover/name:text-primary transition-colors text-5xl md:text-7xl">
+                            {item.name}
+                        </h4>
+                    </a>
 
-            {isMain && (
-                <div className="absolute top-8 left-8 z-20">
-                    <div className="bg-primary/20 backdrop-blur-md border border-primary/30 p-3 rounded-2xl shadow-neon-sm">
-                        <Shield className="w-6 h-6 text-primary drop-shadow-[0_0_10px_rgba(0,242,254,0.8)]" />
+                    <p className={clsx(
+                        "font-bold uppercase tracking-[0.4em] mb-6 text-xs md:text-sm",
+                        colorClass(item.role),
+                        "drop-shadow-[0_0_8px_rgba(0,242,254,0.6)]"
+                    )}>
+                        {item.role || 'Contributor'}
+                    </p>
+
+                    <p className="text-lg md:text-xl text-white/60 font-medium italic leading-relaxed mb-10 max-w-2xl border-l-4 border-primary pl-6 shadow-[inset_4px_0_10px_-4px_rgba(0,242,254,0.3)]">
+                        "{item.completeInfo || item.bio}"
+                    </p>
+
+                    <div className="flex gap-4">
+                        <a href={item.linkedin} target="_blank" className="flex items-center gap-3 bg-white/10 hover:bg-primary px-6 py-3 text-white hover:text-slate-950 font-black text-[10px] uppercase tracking-widest transition-all shadow-lg hover:shadow-neon">
+                            <Linkedin className="w-4 h-4" />
+                            Connect
+                        </a>
+                        <button className="p-3 bg-white/10 hover:bg-white/20 transition-all border border-white/5">
+                            <ExternalLink className="w-4 h-4" />
+                        </button>
                     </div>
                 </div>
-            )}
-        </a>
+            </div>
+        );
+    }
 
-        {/* Data Section */}
-        <div className={clsx(
-            "flex-1 flex flex-col justify-center",
-            isMain ? "p-10 md:p-16 text-left" : "w-full"
-        )}>
-            {!isMain && (
-                <span className="text-[8px] font-black text-primary uppercase tracking-[0.4em] mb-2 opacity-70 drop-shadow-[0_0_5px_rgba(0,242,254,0.4)]">Verified_Personnel</span>
-            )}
-
-            <a
-                href={item.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors cursor-pointer block group/name"
-            >
-                <h4 className={clsx(
-                    "font-black uppercase text-slate-900 dark:text-white tracking-tighter leading-none mb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover/name:text-primary transition-colors",
-                    isMain ? "text-5xl md:text-7xl" : "text-xl md:text-2xl"
-                )}>
-                    {item.name}
-                </h4>
+    /* ── Non-main card — full-bleed image top, info bottom ── */
+    return (
+        <div className="relative flex flex-col overflow-hidden h-full w-full group border border-white/10 bg-white/5 hover:bg-white/8 transition-all shadow-xl">
+            {/* Image — top portion, full bleed */}
+            <a href={item.linkedin} target="_blank" rel="noopener noreferrer"
+                className="relative block w-full flex-[1.4] overflow-hidden cursor-pointer min-h-0">
+                <img
+                    src={item.image}
+                    className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                    alt={item.name}
+                />
+                {/* gradient fading into card bottom */}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                {/* hover overlay */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 backdrop-blur-[1px]">
+                    <ExternalLink className="w-7 h-7 text-white" />
+                </div>
             </a>
 
-            <p className={clsx(
-                "font-bold uppercase tracking-[0.4em] mb-6",
-                isMain ? "text-xs md:text-sm" : "text-[10px]",
-                colorClass(item.role),
-                item.role?.includes("Manager") ? "drop-shadow-[0_0_8px_rgba(0,242,254,0.6)]" : "drop-shadow-[0_0_8px_rgba(255,0,255,0.5)]"
-            )}>
-                {item.role || 'Contributor'}
-            </p>
+            {/* Info section — bottom, filled with content */}
+            <div className="shrink-0 w-full px-5 py-4 bg-black/80 backdrop-blur-xl border-t border-white/10 flex flex-col gap-1.5 min-w-0">
+                <div className="flex items-center justify-between min-w-0 overflow-hidden">
+                    <a href={item.linkedin} target="_blank" rel="noopener noreferrer" className="group/n flex-1 min-w-0">
+                        <h4 className="text-lg md:text-xl font-black uppercase text-white tracking-tight leading-none group-hover/n:text-primary transition-colors flex items-center gap-2 whitespace-nowrap truncate">
+                            {item.name}
+                            <CheckCircle2 className="w-4 h-4 shrink-0 text-primary drop-shadow-neon-sm fill-primary/10" />
+                        </h4>
+                    </a>
+                </div>
 
-            {isMain && (
-                <p className="text-lg md:text-xl text-slate-500 dark:text-white/60 font-medium italic leading-relaxed mb-10 max-w-2xl border-l-4 border-primary pl-6 shadow-[inset_4px_0_10px_-4px_rgba(0,242,254,0.3)]">
-                    "{item.completeInfo || item.bio}"
+                <p className={clsx(
+                    "text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] leading-none mb-1 whitespace-nowrap truncate",
+                    colorClass(item.role)
+                )}>
+                    {item.role || 'Contributor'}
                 </p>
-            )}
 
-            <div className={clsx("flex gap-4", !isMain && "justify-center")}>
-                <a href={item.linkedin} target="_blank" className="flex items-center gap-3 bg-white/10 hover:bg-primary px-6 py-3 rounded-2xl text-slate-900 dark:text-white hover:text-slate-950 font-black text-[10px] uppercase tracking-widest transition-all shadow-lg hover:shadow-neon">
-                    <Linkedin className="w-4 h-4" />
-                    {isMain && "Connect"}
-                </a>
-                <button className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all border border-white/5">
-                    <ExternalLink className="w-4 h-4" />
-                </button>
+                {/* 2-line info about them — increased text size */}
+                <p className="text-[12px] md:text-[13px] text-white/60 font-medium leading-relaxed italic line-clamp-2 min-h-[2.6em] tracking-tight">
+                    {item.bio || item.completeInfo || "Dedicated member contributing to the excellence of Squad 139."}
+                </p>
+
+                <div className="mt-3 flex items-center justify-between">
+                    <a href={item.linkedin} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-white/10 hover:bg-primary px-4 py-2 text-white hover:text-slate-950 font-black text-[9px] uppercase tracking-widest transition-all">
+                        <Linkedin className="w-3.5 h-3.5" />
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 const colorClass = (role) => {
     if (!role) return "text-slate-400";
@@ -101,29 +129,93 @@ const FaceContent = ({ title, subtitle, items, colorClass }) => {
     const itemList = Array.isArray(items) ? items : [items];
     const isSingle = itemList.length === 1;
 
+    const glowShadow =
+        colorClass === "text-primary"
+            ? "drop-shadow-[0_0_15px_rgba(0,242,254,0.8)]"
+            : colorClass === "text-secondary"
+                ? "drop-shadow-[0_0_15px_rgba(255,0,255,0.8)]"
+                : colorClass === "text-yellow-400"
+                    ? "drop-shadow-[0_0_15px_rgba(255,220,0,0.9)]"
+                    : "drop-shadow-[0_0_15px_rgba(255,50,50,0.9)]";
+
+    const accentBg =
+        colorClass === "text-primary"
+            ? "from-primary/20 via-primary/5 to-transparent border-primary/30"
+            : colorClass === "text-secondary"
+                ? "from-secondary/20 via-secondary/5 to-transparent border-secondary/30"
+                : colorClass === "text-yellow-400"
+                    ? "from-yellow-400/20 via-yellow-400/5 to-transparent border-yellow-400/30"
+                    : "from-red-500/20 via-red-500/5 to-transparent border-red-500/30";
+
+    const accentLine =
+        colorClass === "text-primary"
+            ? "via-primary shadow-[0_0_20px_rgba(0,242,254,0.7)]"
+            : colorClass === "text-secondary"
+                ? "via-secondary shadow-[0_0_20px_rgba(255,0,255,0.7)]"
+                : colorClass === "text-yellow-400"
+                    ? "via-yellow-400 shadow-[0_0_20px_rgba(255,220,0,0.8)]"
+                    : "via-red-500 shadow-[0_0_20px_rgba(255,50,50,0.8)]";
+
     return (
-        <div className="w-full h-full flex flex-col antialiased font-outfit overflow-hidden p-4 md:p-6 relative">
-            {/* Minimal Header Cues */}
-            <div className="absolute top-10 left-10 z-30 pointer-events-none">
-                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-white/40 italic mb-2">/Registry_Level_0{isSingle ? '1' : '2'}</p>
-                <h3 className={clsx(
-                    "text-3xl font-black uppercase italic tracking-tighter",
-                    colorClass,
-                    colorClass === "text-primary" ? "drop-shadow-[0_0_15px_rgba(0,242,254,0.8)]" :
-                        colorClass === "text-secondary" ? "drop-shadow-[0_0_15px_rgba(255,0,255,0.8)]" :
-                            "drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]"
-                )}>
-                    {title}
-                </h3>
+        <div className="w-full h-full flex flex-col antialiased font-outfit overflow-hidden">
+
+            {/* ── Face Navbar ── occupies its own dedicated row, never overlaps content ── */}
+            <div className={clsx(
+                "relative shrink-0 w-full flex items-center gap-5 px-8 py-4",
+                "bg-gradient-to-r border-b backdrop-blur-xl",
+                accentBg
+            )}>
+                {/* left accent line */}
+                <div className={clsx(
+                    "h-10 w-1 bg-gradient-to-b from-transparent to-transparent",
+                    colorClass === "text-primary" ? "via-primary" :
+                        colorClass === "text-secondary" ? "via-secondary" :
+                            colorClass === "text-yellow-400" ? "via-yellow-400" : "via-red-500"
+                )} />
+
+                <div className="flex flex-col leading-none gap-1">
+
+                    <h3 className={clsx(
+                        "text-2xl md:text-3xl font-black uppercase italic tracking-tighter leading-none",
+                        colorClass,
+                        glowShadow
+                    )}>
+                        {title}
+                    </h3>
+                    {subtitle && (
+                        <p className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-semibold mt-0.5">
+                            {subtitle}
+                        </p>
+                    )}
+                </div>
+
+                {/* right decorative dots */}
+                <div className="ml-auto flex items-center gap-2 opacity-40">
+                    {[0, 1, 2].map(i => (
+                        <div key={i} className={clsx(
+                            "",
+                            i === 0 ? "w-2.5 h-2.5" : i === 1 ? "w-2 h-2" : "w-1.5 h-1.5",
+                            colorClass === "text-primary" ? "bg-primary" :
+                                colorClass === "text-secondary" ? "bg-secondary" :
+                                    colorClass === "text-yellow-400" ? "bg-yellow-400" : "bg-red-500"
+                        )} />
+                    ))}
+                </div>
+
+                {/* Bottom accent line */}
+                <div className={clsx(
+                    "absolute inset-x-16 bottom-0 h-[1px] bg-gradient-to-r from-transparent to-transparent opacity-60",
+                    accentLine
+                )} />
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 w-full h-full flex items-center justify-center p-2 md:p-4">
+            {/* ── Profile Content — fills all remaining space below the navbar ── */}
+            <div className="flex-1 min-h-0 w-full flex items-center justify-center p-3 md:p-5">
                 {isSingle ? (
                     <ProfileCard item={itemList[0]} isMain={true} count={1} />
                 ) : (
                     <div className={clsx(
-                        "grid w-full h-full gap-4 md:gap-6",
+                        "grid w-full h-full gap-3 md:gap-5",
                         itemList.length === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-2 md:grid-cols-4"
                     )}>
                         {itemList.slice(0, 4).map((item, idx) => (
@@ -138,19 +230,27 @@ const FaceContent = ({ title, subtitle, items, colorClass }) => {
 
 export const LeadershipHub = () => {
     const [rotationIndex, setRotationIndex] = useState(0);
+    // Lock prevents more than one face from rotating per scroll gesture
+    const scrollLocked = useRef(false);
 
     const faces = [
         { label: 'Executive', content: <FaceContent title="Director" subtitle="Strategic Architect" items={leadership.campusManager} colorClass="text-primary" /> },
         { label: 'Mentors', content: <FaceContent title="Mentors" subtitle="Technical Growth" items={leadership.mentors} colorClass="text-secondary" /> },
-        { label: 'Legacy', content: <FaceContent title="Honors" subtitle="Hall of Fame" items={leadership.pastMentors} colorClass="text-slate-400" /> },
-        { label: 'Past Mentors', content: <FaceContent title="Past Mentors" subtitle="The Legacy" items={leadership.pastMentors} colorClass="text-primary" /> }
+        { label: 'Legacy', content: <FaceContent title="Honors" subtitle="Hall of Fame" items={leadership.pastMentors} colorClass="text-yellow-400" /> },
+        { label: 'Past Mentors', content: <FaceContent title="Past Mentors" subtitle="The Legacy" items={leadership.pastMentors} colorClass="text-red-500" /> }
     ];
 
     const activeFaceIndex = ((rotationIndex % 4) + 4) % 4;
     const rotateX = rotationIndex * -90;
 
     const handleWheel = (e) => {
-        if (Math.abs(e.deltaY) < 40) return;
+        if (Math.abs(e.deltaY) < 10) return;  // ignore tiny nudges
+        if (scrollLocked.current) return;      // already rotating — ignore
+
+        scrollLocked.current = true;
+        // Unlock after animation finishes (matches CSS transition-duration of 1s)
+        setTimeout(() => { scrollLocked.current = false; }, 1100);
+
         if (e.deltaY > 0) {
             setRotationIndex(s => s + 1);
         } else {
@@ -181,50 +281,44 @@ export const LeadershipHub = () => {
                 </h1>
             </div>
 
-            {/* Full-Bleed Cuboid Playground */}
-            <div className="relative w-full max-w-[1300px] h-[75vh] perspective-2000 z-10">
+            {/* Cuboid Playground — smaller size, neon border per face */}
+            <div className="relative w-full max-w-[1126px] h-[521px] -mt-[38px] perspective-2000 z-10">
                 <div
                     className="w-full h-full relative preserve-3d transition-transform duration-[1s] ease-[cubic-bezier(0.16, 1, 0.3, 1)]"
                     style={{ transform: `rotateX(${rotateX}deg)` }}
                 >
-                    {/* Face positions */}
-                    {[0, 90, 180, 270].map((rot, idx) => (
-                        <div
-                            key={idx}
-                            className="absolute inset-0 w-full h-full bg-white/5 dark:bg-dark-900/40 backdrop-blur-[40px] border-2 border-white/5 rounded-[4rem] md:rounded-[6rem] shadow-2xl backface-hidden"
-                            style={{ transform: `rotateX(${rot}deg) translateZ(37.5vh)` }}
-                        >
-                            <div className={clsx(
-                                "absolute inset-x-20 top-0 h-1 bg-gradient-to-r from-transparent via-transparent to-transparent opacity-40 z-40",
-                                idx === 0 || idx === 3 ? "via-primary shadow-[0_0_30px_rgba(0,242,254,0.7)]" :
-                                    idx === 1 ? "via-secondary shadow-[0_0_30px_rgba(255,0,255,0.7)]" :
-                                        "via-slate-400 shadow-[0_0_30px_rgba(255,255,255,0.4)]"
-                            )} />
-                            {faces[idx].content}
-                        </div>
-                    ))}
-                </div>
+                    {[0, 90, 180, 270].map((rot, idx) => {
+                        // neon colour per face: 0=cyan 1=magenta 2=yellow 3=red
+                        const neonBorder =
+                            idx === 0
+                                ? 'border-[rgba(0,242,254,0.55)] shadow-[0_0_22px_4px_rgba(0,242,254,0.35),inset_0_0_18px_rgba(0,242,254,0.08)]'
+                                : idx === 1
+                                    ? 'border-[rgba(255,0,255,0.55)] shadow-[0_0_22px_4px_rgba(255,0,255,0.35),inset_0_0_18px_rgba(255,0,255,0.08)]'
+                                    : idx === 2
+                                        ? 'border-[rgba(255,220,0,0.60)] shadow-[0_0_22px_4px_rgba(255,220,0,0.38),inset_0_0_18px_rgba(255,220,0,0.09)]'
+                                        : 'border-[rgba(255,50,50,0.60)] shadow-[0_0_22px_4px_rgba(255,50,50,0.38),inset_0_0_18px_rgba(255,50,50,0.09)]';
 
-                {/* Vertical Loop Nav */}
-                <div className="absolute -right-20 md:-right-28 top-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-30">
-                    <button onClick={() => setRotationIndex(s => s - 1)} className="p-5 glass rounded-[2rem] hover:text-primary transition-all shadow-xl bg-white/5 border-white/10 hover:shadow-neon">
-                        <ChevronUp className="w-8 h-8 md:w-10 md:h-10" />
-                    </button>
-                    <div className="flex flex-col gap-6">
-                        {faces.map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => handleNavClick(i)}
-                                className={clsx(
-                                    "w-2 rounded-full transition-all duration-500",
-                                    activeFaceIndex === i ? "h-20 bg-primary shadow-neon-lg scale-x-150" : "h-4 bg-slate-300 dark:bg-white/10 hover:h-8"
-                                )}
-                            />
-                        ))}
-                    </div>
-                    <button onClick={() => setRotationIndex(s => s + 1)} className="p-5 glass rounded-[2rem] hover:text-primary transition-all shadow-xl bg-white/5 border-white/10 hover:shadow-neon">
-                        <ChevronDown className="w-8 h-8 md:w-10 md:h-10" />
-                    </button>
+                        const topLine =
+                            idx === 0
+                                ? 'via-primary shadow-[0_0_30px_rgba(0,242,254,0.9)]'
+                                : idx === 1
+                                    ? 'via-secondary shadow-[0_0_30px_rgba(255,0,255,0.9)]'
+                                    : idx === 2
+                                        ? 'via-[#ffdc00] shadow-[0_0_30px_rgba(255,220,0,0.9)]'
+                                        : 'via-[#ff3232] shadow-[0_0_30px_rgba(255,50,50,0.9)]';
+
+                        return (
+                            <div
+                                key={idx}
+                                className={`absolute inset-0 w-full h-full bg-white/5 dark:bg-dark-900/40 backdrop-blur-[40px] border-2 backface-hidden ${neonBorder}`}
+                                style={{ transform: `rotateX(${rot}deg) translateZ(241px)` }}
+                            >
+                                {/* top neon line accent */}
+                                <div className={`absolute inset-x-16 top-0 h-[2px] bg-gradient-to-r from-transparent to-transparent opacity-80 z-40 ${topLine}`} />
+                                {faces[idx].content}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>
