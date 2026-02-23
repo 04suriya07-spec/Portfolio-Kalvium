@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Linkedin, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { leadership } from '../../data/students';
+import client from '../../lib/sanityClient';
 
 const ProfileCard = ({ item, isMain }) => {
+    const imageUrl = item.image; // Assuming resolved asset url
     if (isMain) {
         return (
             <div className="bg-white/5 dark:bg-white/[0.04] backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col md:flex-row items-center w-full overflow-hidden h-full group transition-all hover:bg-white/10">
@@ -16,7 +17,7 @@ const ProfileCard = ({ item, isMain }) => {
                     className="relative shrink-0 overflow-hidden block cursor-pointer w-full md:w-[45%] h-64 md:h-full"
                 >
                     <img
-                        src={item.image}
+                        src={imageUrl}
                         className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110"
                         alt={item.name}
                     />
@@ -34,13 +35,13 @@ const ProfileCard = ({ item, isMain }) => {
                         rel="noopener noreferrer"
                         className="hover:text-primary transition-colors cursor-pointer block group/name"
                     >
-                        <h4 className="font-black uppercase text-white tracking-tighter leading-none mb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover/name:text-primary transition-colors text-5xl md:text-7xl">
+                        <h4 className="font-black uppercase text-white tracking-tighter leading-none mb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover/name:text-primary transition-colors text-3xl md:text-7xl">
                             {item.name}
                         </h4>
                     </a>
 
                     <p className={clsx(
-                        "font-bold uppercase tracking-[0.4em] mb-6 text-xs md:text-sm",
+                        "font-bold uppercase tracking-[0.4em] mb-4 text-[10px] md:text-sm",
                         colorClass(item.role),
                         "drop-shadow-[0_0_8px_rgba(0,242,254,0.6)]"
                     )}>
@@ -48,7 +49,7 @@ const ProfileCard = ({ item, isMain }) => {
                     </p>
 
                     <p className="text-lg md:text-xl text-white/60 font-medium italic leading-relaxed mb-10 max-w-2xl border-l-4 border-primary pl-6 shadow-[inset_4px_0_10px_-4px_rgba(0,242,254,0.3)]">
-                        "{item.completeInfo || item.bio}"
+                        "{item.completeInfo || item.bio || item.details}"
                     </p>
 
                     <div className="flex gap-4">
@@ -72,7 +73,7 @@ const ProfileCard = ({ item, isMain }) => {
             <a href={item.linkedin} target="_blank" rel="noopener noreferrer"
                 className="relative block w-full flex-[1.4] overflow-hidden cursor-pointer min-h-0">
                 <img
-                    src={item.image}
+                    src={imageUrl}
                     className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                     alt={item.name}
                 />
@@ -104,7 +105,7 @@ const ProfileCard = ({ item, isMain }) => {
 
                 {/* 2-line info about them — increased text size */}
                 <p className="text-[12px] md:text-[13px] text-white/60 font-medium leading-relaxed italic line-clamp-2 min-h-[2.6em] tracking-tight">
-                    {item.bio || item.completeInfo || "Dedicated member contributing to the excellence of Squad 139."}
+                    {item.bio || item.completeInfo || item.details || "Dedicated member contributing to the excellence of Squad 139."}
                 </p>
 
                 <div className="mt-3 flex items-center justify-between">
@@ -126,8 +127,14 @@ const colorClass = (role) => {
 };
 
 const FaceContent = ({ title, subtitle, items, colorClass }) => {
-    const itemList = Array.isArray(items) ? items : [items];
+    const itemList = Array.isArray(items) ? items : items ? [items] : [];
     const isSingle = itemList.length === 1;
+
+    if (itemList.length === 0) return (
+        <div className="w-full h-full flex items-center justify-center italic text-white/20 uppercase tracking-widest">
+            Registry Empty
+        </div>
+    );
 
     const glowShadow =
         colorClass === "text-primary"
@@ -229,101 +236,107 @@ const FaceContent = ({ title, subtitle, items, colorClass }) => {
 };
 
 export const LeadershipHub = () => {
+    const [leadershipData, setLeadershipData] = useState(null);
     const [rotationIndex, setRotationIndex] = useState(0);
-    // Lock prevents more than one face from rotating per scroll gesture
+    const [touchStart, setTouchStart] = useState(null);
     const scrollLocked = useRef(false);
 
+    useEffect(() => {
+        const query = `*[_type == "leadership"][0] {
+            campusManager { ..., "image": image.asset->url },
+            mentors[] { ..., "image": image.asset->url },
+            pastMentors[] { ..., "image": image.asset->url },
+            honors[] { ..., "image": image.asset->url }
+        }`;
+        client.fetch(query).then(setLeadershipData);
+    }, []);
+
     const faces = [
-        { label: 'Executive', content: <FaceContent title="Director" subtitle="Strategic Architect" items={leadership.campusManager} colorClass="text-primary" /> },
-        { label: 'Mentors', content: <FaceContent title="Mentors" subtitle="Technical Growth" items={leadership.mentors} colorClass="text-secondary" /> },
-        { label: 'Legacy', content: <FaceContent title="Honors" subtitle="Hall of Fame" items={leadership.pastMentors} colorClass="text-yellow-400" /> },
-        { label: 'Past Mentors', content: <FaceContent title="Past Mentors" subtitle="The Legacy" items={leadership.pastMentors} colorClass="text-red-500" /> }
+        { label: 'Executive', content: <FaceContent title="Director" subtitle="Strategic Architect" items={leadershipData?.campusManager} colorClass="text-primary" /> },
+        { label: 'Mentors', content: <FaceContent title="Mentors" subtitle="Technical Growth" items={leadershipData?.mentors} colorClass="text-secondary" /> },
+        { label: 'Legacy', content: <FaceContent title="Honors" subtitle="Hall of Fame" items={leadershipData?.honors} colorClass="text-yellow-400" /> },
+        { label: 'Past Mentors', content: <FaceContent title="Past Mentors" subtitle="The Legacy" items={leadershipData?.pastMentors} colorClass="text-red-500" /> }
     ];
 
     const activeFaceIndex = ((rotationIndex % 4) + 4) % 4;
     const rotateX = rotationIndex * -90;
 
     const handleWheel = (e) => {
-        if (Math.abs(e.deltaY) < 10) return;  // ignore tiny nudges
-        if (scrollLocked.current) return;      // already rotating — ignore
-
+        if (Math.abs(e.deltaY) < 10) return;
+        if (scrollLocked.current) return;
         scrollLocked.current = true;
-        // Unlock after animation finishes (matches CSS transition-duration of 1s)
         setTimeout(() => { scrollLocked.current = false; }, 1100);
-
-        if (e.deltaY > 0) {
-            setRotationIndex(s => s + 1);
-        } else {
-            setRotationIndex(s => s - 1);
-        }
+        setRotationIndex(s => s + (e.deltaY > 0 ? 1 : -1));
     };
 
-    const handleNavClick = (targetIndex) => {
-        const diff = targetIndex - activeFaceIndex;
-        let shortestDiff = diff;
-        if (diff > 2) shortestDiff -= 4;
-        if (diff < -2) shortestDiff += 4;
-        setRotationIndex(rotationIndex + shortestDiff);
+    const handleTouchStart = (e) => setTouchStart(e.touches[0].clientY);
+    const handleTouchMove = (e) => {
+        if (!touchStart || scrollLocked.current) return;
+        const touchEnd = e.touches[0].clientY;
+        const diff = touchStart - touchEnd;
+        if (Math.abs(diff) > 50) {
+            scrollLocked.current = true;
+            setTimeout(() => { scrollLocked.current = false; }, 1100);
+            setRotationIndex(s => s + (diff > 0 ? 1 : -1));
+            setTouchStart(null);
+        }
     };
 
     return (
         <div
-            className="w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-slate-50 dark:bg-transparent px-4 pb-10 pt-20"
+            className="w-full h-full flex flex-col items-center justify-center overflow-hidden bg-transparent md:px-4 pb-10 pt-20"
             onWheel={handleWheel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
         >
-            {/* Background Texture Overlay */}
-            <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] contrast-150" />
-
             {/* Scaled Heading Overlay */}
             <div className="fixed top-[15%] z-0 text-center pointer-events-none opacity-[0.03] dark:opacity-[0.07] w-full select-none">
-                <h1 className="text-[12rem] md:text-[18rem] font-black uppercase italic tracking-tighter leading-none text-slate-900 dark:text-white">
+                <h1 className="text-[8rem] md:text-[18rem] font-black uppercase italic tracking-tighter leading-none text-slate-900 dark:text-white">
                     ARCHIVE
                 </h1>
             </div>
 
-            {/* Cuboid Playground — smaller size, neon border per face */}
-            <div className="relative w-full max-w-[1126px] h-[521px] -mt-[38px] perspective-2000 z-10">
+            {/* Cuboid Playground — Responsive size and Z-depth */}
+            <div className="relative w-full max-w-[1126px] aspect-[16/9] md:h-[521px] perspective-2000 z-10 transition-all">
                 <div
                     className="w-full h-full relative preserve-3d transition-transform duration-[1s] ease-[cubic-bezier(0.16, 1, 0.3, 1)]"
                     style={{ transform: `rotateX(${rotateX}deg)` }}
                 >
                     {[0, 90, 180, 270].map((rot, idx) => {
-                        // neon colour per face: 0=cyan 1=magenta 2=yellow 3=red
                         const neonBorder =
                             idx === 0
-                                ? 'border-[rgba(0,242,254,0.55)] shadow-[0_0_22px_4px_rgba(0,242,254,0.35),inset_0_0_18px_rgba(0,242,254,0.08)]'
+                                ? 'border-[rgba(0,242,254,0.55)] shadow-[0_0_22px_4px_rgba(0,242,254,0.35)]'
                                 : idx === 1
-                                    ? 'border-[rgba(255,0,255,0.55)] shadow-[0_0_22px_4px_rgba(255,0,255,0.35),inset_0_0_18px_rgba(255,0,255,0.08)]'
+                                    ? 'border-[rgba(255,0,255,0.55)] shadow-[0_0_22px_4px_rgba(255,0,255,0.35)]'
                                     : idx === 2
-                                        ? 'border-[rgba(255,220,0,0.60)] shadow-[0_0_22px_4px_rgba(255,220,0,0.38),inset_0_0_18px_rgba(255,220,0,0.09)]'
-                                        : 'border-[rgba(255,50,50,0.60)] shadow-[0_0_22px_4px_rgba(255,50,50,0.38),inset_0_0_18px_rgba(255,50,50,0.09)]';
-
-                        const topLine =
-                            idx === 0
-                                ? 'via-primary shadow-[0_0_30px_rgba(0,242,254,0.9)]'
-                                : idx === 1
-                                    ? 'via-secondary shadow-[0_0_30px_rgba(255,0,255,0.9)]'
-                                    : idx === 2
-                                        ? 'via-[#ffdc00] shadow-[0_0_30px_rgba(255,220,0,0.9)]'
-                                        : 'via-[#ff3232] shadow-[0_0_30px_rgba(255,50,50,0.9)]';
+                                        ? 'border-[rgba(255,220,0,0.60)] shadow-[0_0_22px_4px_rgba(255,220,0,0.38)]'
+                                        : 'border-[rgba(255,50,50,0.60)] shadow-[0_0_22px_4px_rgba(255,50,50,0.38)]';
 
                         return (
                             <div
                                 key={idx}
-                                className={`absolute inset-0 w-full h-full bg-white/5 dark:bg-dark-900/40 backdrop-blur-[40px] border-2 backface-hidden ${neonBorder}`}
-                                style={{ transform: `rotateX(${rot}deg) translateZ(241px)` }}
+                                className={`absolute inset-0 w-full h-full bg-white/5 dark:bg-dark-950/60 backdrop-blur-[40px] border-2 backface-hidden ${neonBorder}`}
+                                style={{ transform: `rotateX(${rot}deg) translateZ(clamp(150px, 20vw, 241px))` }}
                             >
-                                {/* top neon line accent */}
-                                <div className={`absolute inset-x-16 top-0 h-[2px] bg-gradient-to-r from-transparent to-transparent opacity-80 z-40 ${topLine}`} />
                                 {faces[idx].content}
                             </div>
                         );
                     })}
                 </div>
             </div>
+
+            {/* Pagination Dots for Mobile */}
+            <div className="flex gap-4 mt-12 md:hidden">
+                {faces.map((_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => setRotationIndex(i)}
+                        className={`w-3 h-3 rounded-full transition-all ${activeFaceIndex === i ? 'bg-primary scale-125 shadow-neon' : 'bg-white/20'}`}
+                    />
+                ))}
+            </div>
         </div>
     );
 };
-
 const LeadershipSection = () => null;
 export default LeadershipSection;

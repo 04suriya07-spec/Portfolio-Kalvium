@@ -1,0 +1,116 @@
+﻿node.exe : node:internal/mod
+ules/cjs/loader:1424
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (node:  
+  internal/modules/cjs/lo   
+ ader:1424:String) [], R    
+emoteException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+  throw err;
+  ^
+
+Error: Cannot find module 
+'has-flag'
+Require stack:
+- C:\Users\suriy\AppData\Loc
+al\npm-cache\_npx\67a0730928
+194b24\node_modules\@sanity\
+cli\node_modules\chalk\node_
+modules\supports-color\index
+.js
+- C:\Users\suriy\AppData\Loc
+al\npm-cache\_npx\67a0730928
+194b24\node_modules\@sanity\
+cli\node_modules\chalk\sourc
+e\index.js
+- C:\Users\suriy\AppData\Loc
+al\npm-cache\_npx\67a0730928
+194b24\node_modules\@sanity\
+cli\lib\_chunks-cjs\cli.js
+- C:\Users\suriy\AppData\Loc
+al\npm-cache\_npx\67a0730928
+194b24\node_modules\@sanity\
+cli\lib\run.js
+- C:\Users\suriy\AppData\Loc
+al\npm-cache\_npx\67a0730928
+194b24\node_modules\@sanity\
+cli\bin\sanity
+    at 
+Module._resolveFilename (nod
+e:internal/modules/cjs/loade
+r:1421:15)
+    at defaultResolveImpl (n
+ode:internal/modules/cjs/loa
+der:1059:19)
+    at 
+resolveForCJSWithHooks (node
+:internal/modules/cjs/loader
+:1064:22)
+    at Module._load (node:in
+ternal/modules/cjs/loader:12
+27:37)
+    at 
+TracingChannel.traceSync (no
+de:diagnostics_channel:328:1
+4)
+    at wrapModuleLoad (node:
+internal/modules/cjs/loader:
+245:24)
+    at Module.require (node:
+internal/modules/cjs/loader:
+1504:12)
+    at require (node:interna
+l/modules/helpers:152:16)
+    at Object.<anonymous> (C
+:\Users\suriy\AppData\Local\
+npm-cache\_npx\67a0730928194
+b24\node_modules\@sanity\cli
+\node_modules\chalk\node_mod
+ules\supports-color\index.js
+:4:17)
+    at Module._compile (node
+:internal/modules/cjs/loader
+:1761:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\suriy\\AppDa
+ta\\Local\\npm-cache\\_npx\\
+67a0730928194b24\\node_modul
+es\\@sanity\\cli\\node_modul
+es\\chalk\\node_modules\\sup
+ports-color\\index.js',
+    'C:\\Users\\suriy\\AppDa
+ta\\Local\\npm-cache\\_npx\\
+67a0730928194b24\\node_modul
+es\\@sanity\\cli\\node_modul
+es\\chalk\\source\\index.js'
+,
+    'C:\\Users\\suriy\\AppDa
+ta\\Local\\npm-cache\\_npx\\
+67a0730928194b24\\node_modul
+es\\@sanity\\cli\\lib\\_chun
+ks-cjs\\cli.js',
+    'C:\\Users\\suriy\\AppDa
+ta\\Local\\npm-cache\\_npx\\
+67a0730928194b24\\node_modul
+es\\@sanity\\cli\\lib\\run.j
+s',
+    'C:\\Users\\suriy\\AppDa
+ta\\Local\\npm-cache\\_npx\\
+67a0730928194b24\\node_modul
+es\\@sanity\\cli\\bin\\sanit
+y'
+  ]
+}
+
+Node.js v24.12.0

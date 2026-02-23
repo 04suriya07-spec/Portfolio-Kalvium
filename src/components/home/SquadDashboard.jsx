@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { squadInfo } from '../../data/students';
+import client from '../../lib/sanityClient';
 
 const CircularProgress = ({ percentage, label, color, delay }) => {
     const size = 160;
@@ -54,7 +54,7 @@ const CircularProgress = ({ percentage, label, color, delay }) => {
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: delay + 0.3 }}
-                className="text-slate-600 dark:text-white/50 font-black tracking-[0.2em] text-[10px] uppercase italic"
+                className="text-slate-900 dark:text-white/50 font-black tracking-[0.2em] text-[10px] uppercase italic"
             >
                 {label}
             </motion.span>
@@ -63,11 +63,17 @@ const CircularProgress = ({ percentage, label, color, delay }) => {
 };
 
 const SquadDashboard = () => {
-    const metrics = [
-        { label: "Academic Avg", value: squadInfo.stats.academic, color: "#00f2fe", delay: 0.2 },
-        { label: "Attendance", value: squadInfo.stats.attendance, color: "#f0abfc", delay: 0.4 },
-        { label: "LU Completion", value: squadInfo.stats.luCompletion, color: "#4ade80", delay: 0.6 }
-    ];
+    const [stats, setStats] = useState(null);
+
+    useEffect(() => {
+        client.fetch(`*[_type == "squadInfo"][0].stats`).then(setStats);
+    }, []);
+
+    const metrics = stats ? [
+        { label: "Academic Avg", value: stats.academic, color: "#00f2fe", delay: 0.2 },
+        { label: "Attendance", value: stats.attendance, color: "#f0abfc", delay: 0.4 },
+        { label: "LU Completion", value: stats.luCompletion, color: "#4ade80", delay: 0.6 }
+    ] : [];
 
     return (
         <div className="w-full max-w-5xl mx-auto px-4">

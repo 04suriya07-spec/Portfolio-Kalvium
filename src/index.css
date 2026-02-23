@@ -4,20 +4,18 @@
 @config "../tailwind.config.js";
 
 :root {
-  --bg-color: #f8fafc;
-  /* Bright slate-50 */
-  --text-main: #020617;
-  /* Slate-950 - Stronger dark text */
-  --text-muted: #334155;
-  /* Slate-700 - Better visibility than 600 */
+  --bg-color: #ffffff;
+  --text-main: #0f172a;
+  /* Slate-900 */
+  --text-muted: #475569;
+  /* Slate-600 */
   --text-dim: #64748b;
-  /* Slate-500 - For faint text */
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(15, 23, 42, 0.15);
-  /* Stronger borders */
-  --glass-shadow: rgba(0, 0, 0, 0.08);
+  /* Slate-500 */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(15, 23, 42, 0.2);
+  --glass-shadow: rgba(0, 0, 0, 0.05);
   --glass-accent: rgba(0, 242, 254, 0.1);
-  --primary-glow: rgba(0, 242, 254, 0.2);
+  --primary-glow: rgba(0, 242, 254, 0.3);
 }
 
 .dark {
@@ -30,7 +28,7 @@
   --text-dim: #64748b;
   /* Slate-500 */
   --glass-bg: rgba(15, 23, 42, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: rgba(0, 0, 0, 0.4);
   --glass-accent: rgba(0, 242, 254, 0.1);
   --primary-glow: rgba(0, 242, 254, 0.5);
@@ -89,6 +87,7 @@ html {
     @apply px-8 py-4 border rounded-full font-bold hover:scale-105 active:scale-95 transition-all duration-300;
     border-color: var(--glass-border);
     background-color: var(--glass-bg);
+    color: var(--text-main);
   }
 
   .neon-border {
@@ -99,9 +98,9 @@ html {
     @apply py-20 px-4 md:px-8 max-w-7xl mx-auto;
   }
 
-  /* Full page horizontal scroll snap utilities */
+  /* Full page scroll snap utilities — Responsive First */
   .snap-container {
-    @apply h-screen w-screen overflow-x-auto overflow-y-hidden flex snap-x snap-mandatory scroll-smooth;
+    @apply h-screen w-screen overflow-y-auto overflow-x-hidden flex flex-col snap-y snap-mandatory scroll-smooth md:flex-row md:overflow-x-auto md:overflow-y-hidden md:snap-x;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
@@ -111,7 +110,9 @@ html {
   }
 
   .snap-section {
-    @apply h-screen w-screen flex-shrink-0 snap-center snap-always relative flex flex-col items-center overflow-y-auto overflow-x-hidden;
+    @apply h-screen w-screen flex-shrink-0 snap-center snap-always relative flex flex-col items-center overflow-y-auto overflow-x-hidden bg-transparent;
+    /* Prevent layout shift on mobile */
+    min-height: -webkit-fill-available;
   }
 }
 

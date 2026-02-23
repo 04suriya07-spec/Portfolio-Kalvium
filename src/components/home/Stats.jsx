@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { squadInfo } from '../../data/students';
+import client from '../../lib/sanityClient';
 
 const StatCircle = ({ value, label, color }) => {
     const radius = 40;
@@ -56,6 +56,14 @@ const StatCircle = ({ value, label, color }) => {
 };
 
 const Stats = () => {
+    const [stats, setStats] = useState(null);
+
+    useEffect(() => {
+        client.fetch(`*[_type == "squadInfo"][0].stats`).then(setStats);
+    }, []);
+
+    if (!stats) return null;
+
     return (
         <section className="py-10">
             <div className="glass-card rounded-[2rem] p-10 md:p-16 relative overflow-hidden">
@@ -74,17 +82,17 @@ const Stats = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 md:gap-24 w-full justify-items-center">
                         <StatCircle
-                            value={squadInfo.stats.academic}
+                            value={stats.academic}
                             label="Academic Avg"
                             color="#00f2fe"
                         />
                         <StatCircle
-                            value={squadInfo.stats.attendance}
+                            value={stats.attendance}
                             label="Attendance"
                             color="#f093fb"
                         />
                         <StatCircle
-                            value={squadInfo.stats.luCompletion}
+                            value={stats.luCompletion}
                             label="LU Completion"
                             color="#00d2ff"
                         />

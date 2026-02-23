@@ -1,0 +1,24 @@
+{
+    "name": "studio-portfolio-kalvium",
+    "private": true,
+    "version": "1.0.0",
+    "main": "package.json",
+    "scripts": {
+        "dev": "sanity dev",
+        "start": "sanity start",
+        "build": "sanity build",
+        "deploy": "sanity deploy",
+        "graphql": "sanity graphql"
+    },
+    "dependencies": {
+        "@sanity/vision": "^5.11.0",
+        "lucide-react": "^0.575.0",
+        "react": "^19.2.4",
+        "react-dom": "^19.2.4",
+        "sanity": "^5.11.0",
+        "styled-components": "^6.3.11"
+    },
+    "devDependencies": {
+        "typescript": "^5.3.3"
+    }
+}

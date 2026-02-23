@@ -1,0 +1,27 @@
+﻿node.exe : - Fetching 
+providers...
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (- Fet  
+  ching providers...:Stri   
+ ng) [], RemoteException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+? Please log in or create a new account (Use arrow keys)
+> Google 
+  GitHub 
+  E-mail / password [20D[20C[2K[1A[2K[1A[2K[1A[2K[G? Please log in or create a new account Google[46D[46C
+
+Opening browser at https://api.sanity.io/v1/auth/login/google?type=token&label=Carl-007+%2F+Windows&origin=http%3A%2F%2Flocalhost%3A4321%2Fcallback
+
+- Waiting for browser login 
+to complete... Press Ctrl + 
+C to cancel

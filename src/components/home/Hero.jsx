@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { squadInfo } from '../../data/students';
+import client from '../../lib/sanityClient';
 
 const Hero = () => {
+    const [info, setInfo] = useState(null);
+
+    useEffect(() => {
+        client.fetch(`*[_type == "squadInfo"][0]`).then(setInfo);
+    }, []);
+
     return (
         <section className="snap-section bg-mesh relative overflow-hidden flex flex-col items-center justify-center">
             {/* Animated Background Elements */}
@@ -33,15 +39,15 @@ const Hero = () => {
                 >
                     <h1 className="text-6xl md:text-9xl font-black mb-8 tracking-tighter leading-none">
                         <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-gradient-x bg-clip-text text-transparent">
-                            Squad 139
+                            {info?.name || "Squad 139"}
                         </span>
                         <span className="block text-4xl md:text-6xl mt-4 opacity-90 text-slate-900 dark:text-white">
                             The future of Engineering
                         </span>
                     </h1>
 
-                    <p className="text-xl md:text-2xl text-slate-600 dark:text-white/60 mb-12 max-w-3xl mx-auto leading-relaxed font-light italic">
-                        {squadInfo.tagline}. A high-performance student collective from Kalvium Academy specializing in modern web technologies and AI.
+                    <p className="text-xl md:text-2xl text-slate-800 dark:text-white/60 mb-12 max-w-3xl mx-auto leading-relaxed font-light italic">
+                        {info?.tagline || "High-performance student collective"}. A high-performance student collective from Kalvium Academy specializing in modern web technologies and AI.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">

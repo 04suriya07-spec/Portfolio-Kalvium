@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Image as ImageIcon, Filter, Maximize2, X, Users, Calendar, Trophy } from 'lucide-react';
-import { students } from '../data/students';
+import client from '../lib/sanityClient';
 
 const categories = [
     { id: 'all', name: 'All Access', icon: Filter },
@@ -10,19 +10,46 @@ const categories = [
     { id: 'achievements', name: 'Hall of Fame', icon: Trophy },
 ];
 
-const galleryItems = [
-    // We can use some unsplash images as placeholders for events/squad stuff
-    { id: 1, category: 'events', title: 'Code Rush 2025', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=800', description: 'Internal hackathon where Squad 139 swept the awards.' },
-    { id: 2, category: 'squad', title: 'Collaboration Session', image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800', description: 'Late night debugging at Kalvium HQ.' },
-    { id: 3, category: 'achievements', title: 'Regional Winners', image: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&q=80&w=800', description: 'Secured 1st place in the TechX Hackathon.' },
-    { id: 4, category: 'events', title: 'Tech Talk: AI Future', image: 'https://images.unsplash.com/photo-1591115765373-520b7a08d234?auto=format&fit=crop&q=80&w=800', description: 'Dr. Aniruddha Ghosal sharing insights on AI.' },
-    { id: 5, category: 'squad', title: 'Morning Standup', image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=800', description: 'Syncing up on our monthly mission goals.' },
-    { id: 6, category: 'achievements', title: 'Open Source Pioneers', image: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=800', description: 'Major contributors to the Kalvium CLI tool.' },
-];
-
 const Gallery = () => {
     const [filter, setFilter] = useState('all');
     const [selectedImage, setSelectedImage] = useState(null);
+    const [galleryItems, setGalleryItems] = useState([]);
+
+    useEffect(() => {
+        const query = `{
+            "studentLogs": *[_type == "student" && defined(gallery)] {
+                "studentName": name,
+                gallery[] {
+                    "id": asset->_id,
+                    "image": asset->url,
+                    "title": ^.name + "'s Archive",
+                    "category": "squad",
+                    "description": "Captured during the professional journey."
+                }
+            },
+            "universeEntries": *[_type == "universe"] {
+                "_id": _id,
+                "title": title,
+                "description": description,
+                "category": category,
+                "image": image.asset->url
+            }
+        }`;
+
+        client.fetch(query).then(data => {
+            const studentItems = data.studentLogs.flatMap(s => s.gallery || []);
+            const universeItems = data.universeEntries.map(u => ({
+                id: u._id,
+                image: u.image || '/avatars/none.png',
+                title: u.title,
+                category: u.category === 'tech' ? 'achievements' :
+                    u.category === 'milestone' ? 'events' : 'achievements',
+                description: u.description
+            }));
+
+            setGalleryItems([...universeItems, ...studentItems].filter(item => item.image || item.id));
+        });
+    }, []);
 
     const filteredItems = filter === 'all' ? galleryItems : galleryItems.filter(item => item.category === filter);
 

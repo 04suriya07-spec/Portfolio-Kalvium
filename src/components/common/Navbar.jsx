@@ -33,9 +33,21 @@ const Navbar = () => {
             )}
         >
             <div className={twMerge(
-                "max-w-7xl mx-auto rounded-2xl transition-all duration-300 px-6 py-3 flex items-center justify-between",
-                isScrolled ? "glass shadow-2xl" : "bg-transparent"
+                "max-w-7xl mx-auto rounded-[2.8rem] transition-all duration-700 px-6 md:px-10 py-3 flex items-center justify-between relative overflow-hidden group border",
+                isScrolled
+                    ? "bg-white/60 dark:bg-dark-950/20 backdrop-blur-[60px] backdrop-saturate-[250%] shadow-[0_20px_100px_-20px_rgba(0,0,0,0.1)] dark:shadow-[0_30px_100px_-20px_rgba(0,242,254,0.4)] border-slate-200 dark:border-white/20 ring-1 ring-slate-100 dark:ring-white/10"
+                    : "bg-white/40 dark:bg-white/[0.01] backdrop-blur-[40px] border-slate-200/50 dark:border-white/10"
             )}>
+                {/* Textured Glass Grain */}
+                <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.12] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover mix-blend-overlay" />
+
+                {/* Specular Edge & Refractions */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/40 via-transparent to-white/10 dark:from-white/10 dark:to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/30 to-transparent pointer-events-none" />
+
+                {/* Top/Bottom Highlight Tracers */}
+                <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
+                <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-secondary/50 to-transparent opacity-30" />
                 {/* Left side: Kalvium logo + Squad 139 */}
                 <div className="flex items-center gap-4">
                     {/* Kalvium Logo */}
@@ -67,7 +79,7 @@ const Navbar = () => {
                                 "relative font-bold text-xs uppercase tracking-widest transition-colors hover:text-primary flex items-center gap-2",
                                 location.pathname === link.path
                                     ? "text-primary font-black scale-105"
-                                    : "text-slate-700 dark:text-white/60"
+                                    : "text-slate-900 dark:text-white/60"
                             )}
                         >
                             <link.icon className="w-4 h-4" />
